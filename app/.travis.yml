@@ -1,0 +1,4 @@
+language: android
+rvm:
+  - 4.12
+  - junit
