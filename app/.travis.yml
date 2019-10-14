@@ -1,0 +1,8 @@
+language: android
+rvm:
+  - 4.12
+  - junit
+branches:
+  only:
+   - master
+   - stable
