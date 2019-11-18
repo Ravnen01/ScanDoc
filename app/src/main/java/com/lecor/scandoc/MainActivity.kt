@@ -17,32 +17,40 @@ import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
-    val REQUEST_IMAGE_CAPTURE=123
-    val MY_PERMISSIONS_REQUEST_CAMERA=456
-    val tess=TessBaseAPI()
-    val lang="fra"
-    lateinit var LANGUAGE_PATH:String
+    val REQUEST_IMAGE_CAPTURE = 123
+    val MY_PERMISSIONS_REQUEST_CAMERA = 456
+    val tess = TessBaseAPI()
+    val lang = "fra"
+    lateinit var LANGUAGE_PATH: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        LANGUAGE_PATH=applicationContext.filesDir.absolutePath+"/lang/tessdata/"
+        LANGUAGE_PATH = applicationContext.filesDir.absolutePath + "/lang/tessdata/"
         // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
 
             // Permission is not granted
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.CAMERA)) {
-
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    Manifest.permission.CAMERA
+                )
+            ) {
+                //TODO:if with empty body
 
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    MY_PERMISSIONS_REQUEST_CAMERA)
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    MY_PERMISSIONS_REQUEST_CAMERA
+                )
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
@@ -56,55 +64,52 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun dispatchTakePictureIntent() {
-        val path=applicationContext.filesDir.absolutePath+"/lang/"
-        val name="image.png"
-        val file = File(path,name)
+        val path = applicationContext.filesDir.absolutePath + "/lang/"
+        val name = "image.png"
+        val file = File(path, name)
         val outputFileUri = FileProvider.getUriForFile(
             this@MainActivity,
             "com.lecor.scandoc.provider",
             file
         )
-        val intent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri)
         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
     }
 
-
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when(requestCode){
-            REQUEST_IMAGE_CAPTURE ->{
-                val path=applicationContext.filesDir.absolutePath+"/lang/"
-                val name="image.png"
-                tess.setImage(File(path,name))
-                val text=tess.utF8Text
-                textView.text=text
+        when (requestCode) {
+            REQUEST_IMAGE_CAPTURE -> {
+                val path = applicationContext.filesDir.absolutePath + "/lang/"
+                val name = "image.png"
+                tess.setImage(File(path, name))
+                val text = tess.utF8Text
+                textView.text = text
             }
         }
     }
 
-    fun initTesseract(){
+    fun initTesseract() {
         loadLangAsset()
-        val path=applicationContext.filesDir.absolutePath+"/lang/"
+        val path = applicationContext.filesDir.absolutePath + "/lang/"
         tess.init(path, lang)
     }
 
-    fun loadLangAsset(){
-        val asset=lang+".traineddata"
-        val languageFile=File(LANGUAGE_PATH,asset)
-        if(!languageFile.exists()){
-            if(!languageFile.parentFile.exists()) languageFile.parentFile.mkdirs()
-            val assetManager=assets
-            val input=assetManager.open(asset)
-            val output=FileOutputStream(languageFile)
+    fun loadLangAsset() {
+        val asset = lang + ".traineddata"
+        val languageFile = File(LANGUAGE_PATH, asset)
+        if (!languageFile.exists()) {
+            if (!languageFile.parentFile.exists()) languageFile.parentFile.mkdirs()
+            val assetManager = assets
+            val input = assetManager.open(asset)
+            val output = FileOutputStream(languageFile)
             val buf = ByteArray(1024)
             var len: Int
-            len=input.read(buf)
+            len = input.read(buf)
             while (len > 0) {
                 output.write(buf, 0, len)
-                len=input.read(buf)
+                len = input.read(buf)
             }
             input.close()
             output.close()
