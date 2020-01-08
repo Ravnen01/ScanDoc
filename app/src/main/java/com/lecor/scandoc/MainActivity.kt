@@ -38,14 +38,11 @@ class MainActivity : AppCompatActivity() {
             != PackageManager.PERMISSION_GRANTED
         ) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(
                     this,
                     Manifest.permission.CAMERA
                 )
             ) {
-                //TODO:if with empty body
-
-            } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(
                     this,
